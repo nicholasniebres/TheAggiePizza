@@ -1,6 +1,7 @@
 package com.pluralsight.ui;
 
 import com.pluralsight.models.Drink;
+import com.pluralsight.models.GarlicKnots;
 import com.pluralsight.models.Pizza;
 import com.pluralsight.ui.enums.*;
 
@@ -87,7 +88,7 @@ public class UserInterface {
         switch (option) {
             case ADD_PIZZA -> processAddPizza();
             case ADD_DRINK -> processAddDrink();
-            //case ADD_GARLIC_KNOTS -> processAddGarlicKnots();
+            case ADD_GARLIC_KNOTS -> processAddGarlicKnots();
             case CHECKOUT -> processCheckout();
         }
     }
@@ -131,6 +132,11 @@ public class UserInterface {
         String flavor = scanner.nextLine();
 
         currentOrder.add(0, new Drink(size, flavor));
+    }
+
+    private void processAddGarlicKnots() {
+        currentOrder.add(0, new GarlicKnots());
+        System.out.println("Garlic Knots added to basket.");
     }
 
     private void processCheckout() {
