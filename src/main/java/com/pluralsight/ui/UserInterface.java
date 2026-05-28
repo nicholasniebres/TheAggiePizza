@@ -5,6 +5,12 @@ import com.pluralsight.models.GarlicKnots;
 import com.pluralsight.models.Pizza;
 import com.pluralsight.ui.enums.*;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -166,11 +172,42 @@ public class UserInterface {
         String confirmation = scanner.nextLine().toLowerCase().trim();
 
         if (confirmation.equals("yes")) {
-            //saveReceipt(total);
+            saveReceipt(total);
             currentOrder.clear();
         } else {
             currentOrder.clear();
             System.out.println("Order cancelled and dropped.");
+        }
+    }
+
+    private void saveReceipt(double total) {
+        // Build formatted dynamically generated file name rule: yyyyMMdd-HHmmss.txt
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss");
+        String filename = now.format(formatter) + ".txt";
+
+        // Establish output receipts directory storage structure
+        File directory = new File("receipts");
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+
+        File file = new File(directory, filename);
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(file))) {
+            writer.println("=====================================");
+            writer.println("         AGGIES PIZZA RECEIPT        ");
+            writer.printf(" Date/Time: %s%n", now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+            writer.println("=====================================");
+            for (Orderable item : currentOrder) {
+                writer.printf("%s - $%.2f%n", item.getDescription(), item.getPrice());
+            }
+            writer.println("-------------------------------------");
+            writer.printf("TOTAL PAID: $%.2f%n", total);
+            writer.println("=====================================");
+            System.out.println("Receipt successfully exported to: " + file.getPath());
+        } catch (IOException e) {
+            System.out.println("Fatal: Could not issue transactional text backup. " + e.getMessage());
         }
     }
 
