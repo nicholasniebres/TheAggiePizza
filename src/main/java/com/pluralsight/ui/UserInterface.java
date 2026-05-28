@@ -1,10 +1,8 @@
 package com.pluralsight.ui;
 
+import com.pluralsight.models.Drink;
 import com.pluralsight.models.Pizza;
-import com.pluralsight.ui.enums.Crust;
-import com.pluralsight.ui.enums.MenuOption;
-import com.pluralsight.ui.enums.Size;
-import com.pluralsight.ui.enums.Topping;
+import com.pluralsight.ui.enums.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +86,7 @@ public class UserInterface {
     private void handleMenuChoice(MenuOption option) {
         switch (option) {
             case ADD_PIZZA -> processAddPizza();
-            //case ADD_DRINK -> processAddDrink();
+            case ADD_DRINK -> processAddDrink();
             //case ADD_GARLIC_KNOTS -> processAddGarlicKnots();
             case CHECKOUT -> processCheckout();
         }
@@ -116,7 +114,7 @@ public class UserInterface {
             String input = scanner.nextLine().toUpperCase().replace(" ", "_").trim();
             if (input.equals("DONE")) break;
             try {
-                //pizza.addTopping(Topping.valueOf(input));
+                pizza.addTopping(Topping.valueOf(input));
             } catch (IllegalArgumentException e) {
                 System.out.println("Topping not recognized. Try again.");
             }
@@ -124,6 +122,15 @@ public class UserInterface {
 
         // Feature Rule: Display newest items on top/first
         currentOrder.add(0, pizza);
+    }
+
+    private void processAddDrink() {
+        System.out.print("Select drink size (SMALL, MEDIUM, LARGE): ");
+        DrinkSize size = DrinkSize.valueOf(scanner.nextLine().toUpperCase().trim());
+        System.out.print("Enter flavor: ");
+        String flavor = scanner.nextLine();
+
+        currentOrder.add(0, new Drink(size, flavor));
     }
 
     private void processCheckout() {
