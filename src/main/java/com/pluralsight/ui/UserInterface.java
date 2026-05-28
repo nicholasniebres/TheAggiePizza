@@ -1,6 +1,10 @@
 package com.pluralsight.ui;
 
+import com.pluralsight.models.Pizza;
+import com.pluralsight.ui.enums.Crust;
 import com.pluralsight.ui.enums.MenuOption;
+import com.pluralsight.ui.enums.Size;
+import com.pluralsight.ui.enums.Topping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +76,7 @@ public class UserInterface {
                 break;
             }
 
-            // handleMenuChoice(option);
+            handleMenuChoice(option);
 
             // Break back to main home system loop if checked out successfully
             if (option == MenuOption.CHECKOUT && currentOrder.isEmpty()) {
@@ -81,4 +85,81 @@ public class UserInterface {
         }
     }
 
+    private void handleMenuChoice(MenuOption option) {
+        switch (option) {
+            case ADD_PIZZA -> processAddPizza();
+            //case ADD_DRINK -> processAddDrink();
+            //case ADD_GARLIC_KNOTS -> processAddGarlicKnots();
+            case CHECKOUT -> processCheckout();
+        }
+    }
+
+    private void processAddPizza() {
+        System.out.println("\n--- Create Your Pizza ---");
+        System.out.println("Sizes available: PERSONAL (8\"), MEDIUM (12\"), LARGE (16\")");
+        System.out.print("Select size: ");
+        Size size = Size.valueOf(scanner.nextLine().toUpperCase().trim());
+
+        System.out.println("Crusts available: THIN, REGULAR, THICK, CAULIFLOWER");
+        System.out.print("Select crust type: ");
+        Crust crust = Crust.valueOf(scanner.nextLine().toUpperCase().trim());
+
+        System.out.print("Would you like stuffed crust? (true/false): ");
+        boolean stuffed = Boolean.parseBoolean(scanner.nextLine().trim());
+
+        Pizza pizza = new Pizza(size, crust, stuffed);
+
+        System.out.println("\nAdd toppings. Type 'DONE' to finish customization.");
+        System.out.println("Options: PEPPERONI, SAUSAGE, HAM, MOZZARELLA, RICOTTA, ONIONS, MUSHROOMS, MARINARA, etc.");
+        while (true) {
+            System.out.print("Enter topping name: ");
+            String input = scanner.nextLine().toUpperCase().replace(" ", "_").trim();
+            if (input.equals("DONE")) break;
+            try {
+                //pizza.addTopping(Topping.valueOf(input));
+            } catch (IllegalArgumentException e) {
+                System.out.println("Topping not recognized. Try again.");
+            }
+        }
+
+        // Feature Rule: Display newest items on top/first
+        currentOrder.add(0, pizza);
+    }
+
+    private void processCheckout() {
+        // Business Rule Exception constraint handling
+        long pizzaCount = currentOrder.stream().filter(item -> item instanceof Pizza).count();
+        if (currentOrder.isEmpty()) {
+            System.out.println("Cannot checkout an empty basket!");
+            return;
+        }
+        if (pizzaCount == 0 && currentOrder.isEmpty()) {
+            System.out.println("Empty orders must contain at least one Side or Drink item to proceed.");
+            return;
+        }
+
+        System.out.println("\n=============================");
+        System.out.println("     YOUR ORDER SUMMARY      ");
+        System.out.println("=============================");
+        double total = 0;
+        for (Orderable item : currentOrder) {
+            System.out.printf("%s%n -> Price: $%.2f%n%n", item.getDescription(), item.getPrice());
+            total += item.getPrice();
+        }
+        System.out.printf("Total Cost: $%.2f%n", total);
+        System.out.println("=============================");
+
+        System.out.print("Confirm purchase? (yes/cancel): ");
+        String confirmation = scanner.nextLine().toLowerCase().trim();
+
+        if (confirmation.equals("yes")) {
+            //saveReceipt(total);
+            currentOrder.clear();
+        } else {
+            currentOrder.clear();
+            System.out.println("Order cancelled and dropped.");
+        }
+    }
+
 }
+
