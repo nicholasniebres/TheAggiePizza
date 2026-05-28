@@ -28,10 +28,7 @@ The application relies heavily on **Polymorphism**. The core user interface cont
 ### System Class Diagram
 
 
-
-<img width="966" height="1036" alt="Screenshot 2026-05-26 232517" src="https://github.com/user-attachments/assets/de87f852-a4e1-4935-a196-15f149bfb9c6" />
-
-
+<img width="966" height="1036" alt="Screenshot 2026-05-26 232517" src="https://github.com/user-attachments/assets/a3bc6eac-640e-4ffc-9cf6-0a1740596aea" />
 
 
 How the Components Interact
